@@ -1,0 +1,11 @@
+{
+  "repo_url": "https://github.com/Coffee2tea/banksy_style",
+  "service_name": "banksy-style",
+  "branch": "main",
+  "port": 3000,
+  "env_vars": {
+    "OPENAI_API_KEY": "<set-in-deploy>",
+    "REFERENCE_IMAGE_PATH": "public/reference/Screenshot 2025-11-28 145510.jpg",
+    "NODE_ENV": "production"
+  }
+}

@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
+import OpenAI from "openai";
 
 export const runtime = "nodejs";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 type ReferenceSource =
   | { image: Buffer }
@@ -67,7 +63,8 @@ export async function POST(req: Request) {
     );
   }
 
-  if (!process.env.OPENAI_API_KEY) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
     return NextResponse.json(
       { message: "OPENAI_API_KEY is missing." },
       { status: 500 },
@@ -75,6 +72,8 @@ export async function POST(req: Request) {
   }
 
   try {
+    const openai = new OpenAI({ apiKey });
+
     const result = await openai.images.generate({
       model: "gpt-image-1",
       prompt: promptWithStyle,
@@ -82,7 +81,7 @@ export async function POST(req: Request) {
       ...reference,
     });
 
-    const imageBase64 = result.data[0]?.b64_json;
+    const imageBase64 = result.data?.[0]?.b64_json;
     if (!imageBase64) {
       throw new Error("No image returned from model.");
     }
