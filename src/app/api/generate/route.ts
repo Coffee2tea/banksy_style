@@ -1,44 +1,7 @@
 import { NextResponse } from "next/server";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { resolve } from "node:path";
 import OpenAI from "openai";
 
 export const runtime = "nodejs";
-
-type ReferenceSource =
-  | { image: Buffer }
-  | { image_url: string };
-
-function loadReferenceImage(): ReferenceSource {
-  const imageUrl = process.env.REFERENCE_IMAGE_URL;
-  if (imageUrl) return { image_url: imageUrl };
-
-  const base64 = process.env.REFERENCE_IMAGE_BASE64;
-  if (base64) return { image: Buffer.from(base64, "base64") };
-
-  const filePath = process.env.REFERENCE_IMAGE_PATH;
-  if (filePath) {
-    const absolute = resolve(filePath);
-    return { image: readFileSync(absolute) };
-  }
-
-  const referenceDir = resolve("public", "reference");
-  try {
-    const firstFile = readdirSync(referenceDir).find((name) => {
-      const fullPath = resolve(referenceDir, name);
-      return statSync(fullPath).isFile();
-    });
-    if (firstFile) {
-      return { image: readFileSync(resolve(referenceDir, firstFile)) };
-    }
-  } catch {
-    // ignore and fall through to error throw
-  }
-
-  throw new Error(
-    "Reference image missing. Place an image in public/reference or set REFERENCE_IMAGE_URL, REFERENCE_IMAGE_BASE64, or REFERENCE_IMAGE_PATH.",
-  );
-}
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -51,17 +14,11 @@ export async function POST(req: Request) {
     );
   }
 
-  const promptWithStyle = `Banksy style. ${prompt}`;
-
-  let reference: ReferenceSource;
-  try {
-    reference = loadReferenceImage();
-  } catch (error) {
-    return NextResponse.json(
-      { message: error instanceof Error ? error.message : "Reference image unavailable." },
-      { status: 500 },
-    );
-  }
+  const referenceUrl =
+    process.env.REFERENCE_IMAGE_URL || process.env.REFERENCE_IMAGE_PATH;
+  const promptWithStyle = referenceUrl
+    ? `Banksy style. Use this reference image for inspiration if possible: ${referenceUrl}. ${prompt}`
+    : `Banksy style. ${prompt}`;
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -78,7 +35,6 @@ export async function POST(req: Request) {
       model: "gpt-image-1",
       prompt: promptWithStyle,
       size: "1024x1024",
-      ...reference,
     });
 
     const imageBase64 = result.data?.[0]?.b64_json;
