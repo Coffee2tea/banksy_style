@@ -26,11 +26,9 @@ export async function POST(req: Request) {
       : `${baseUrl}/${rawReference.replace(/^public\\/?/, "")}`
     : null;
 
-  const stylePrefix =
-    "Stencil street-art style, spray paint texture, gritty urban wall.";
   const promptWithStyle = referenceUrl
-    ? `${stylePrefix} Use this reference image for inspiration: ${referenceUrl}. ${prompt}`
-    : `${stylePrefix} ${prompt}`;
+    ? `Imitate the style and mood of this reference image: ${referenceUrl}. Follow this description to generate the image: ${prompt}`
+    : `Follow this description to generate the image: ${prompt}`;
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
