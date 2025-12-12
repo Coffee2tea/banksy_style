@@ -32,7 +32,7 @@ export default function Home() {
 
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
-        throw new Error(errorBody?.message || "生成失败，请重试。");
+        throw new Error(errorBody?.message || "Something went wrong. Please try again.");
       }
 
       const { imageBase64: base64 } = (await response.json()) as {
@@ -40,12 +40,12 @@ export default function Home() {
       };
 
       if (!base64) {
-        throw new Error("未收到图片内容，请稍后再试。");
+        throw new Error("No image was returned. Please try again.");
       }
 
       setImageBase64(base64);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "生成失败，请重试。");
+      setMessage(error instanceof Error ? error.message : "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -69,21 +69,20 @@ export default function Home() {
             Banksy Studio
           </p>
           <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
-            生成 Banksy 风格的图像
+            Banksy-style image maker
           </h1>
           <p className="max-w-2xl text-base text-slate-300">
-            输入一句描述，后端会带上我们提供的参考图调用 OpenAI 图像模型。
-            点击生成后，稍等片刻即可看到结果。
+            Create gritty, stencil-inspired art from your prompt using a fixed reference image and OpenAI image generation.
           </p>
           <div className="flex flex-wrap gap-3 text-xs text-slate-200/70">
             <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-              固定参考图（后台注入）
+              Stencil / street-art vibe
             </span>
             <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-              模型：gpt-image-1
+              Model: gpt-image-1
             </span>
             <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-              输出：1024 × 1024
+              Size: 1024 × 1024
             </span>
           </div>
         </header>
@@ -93,26 +92,26 @@ export default function Home() {
             <form className="space-y-5" onSubmit={handleSubmit}>
               <label className="flex flex-col gap-3">
                 <div className="flex items-center justify-between text-sm text-slate-200/80">
-                  <span>提示词</span>
+                  <span>Your prompt</span>
                   <button
                     type="button"
                     onClick={handleUseSample}
                     className="rounded-full border border-fuchsia-400/40 bg-fuchsia-500/10 px-3 py-1 text-xs font-medium text-fuchsia-100 transition hover:-translate-y-0.5 hover:border-fuchsia-300/60 hover:bg-fuchsia-500/20"
                   >
-                    使用示例
+                    Use sample
                   </button>
                 </div>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="描述你想要的场景，例如：雨夜街头的涂鸦墙，出现一只拿着喷漆罐的狐狸。"
+                  placeholder='Describe the scene you want in a Banksy style (e.g., "A child reaching for a red heart-shaped balloon").'
                   className="min-h-32 w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-base text-white outline-none transition focus:border-fuchsia-400/70 focus:ring-2 focus:ring-fuchsia-400/30"
                 />
               </label>
 
               <div className="flex items-center justify-between text-sm text-slate-300">
                 <span>
-                  提示词自动加上 Banksy 风格，会套用后台参考图增强一致性。
+                  The API uses a fixed reference image to nudge the composition into a Banksy-inspired look.
                 </span>
                 {message && (
                   <span className="rounded-full border border-amber-300/30 bg-amber-500/10 px-3 py-1 text-amber-100">
@@ -126,7 +125,7 @@ export default function Home() {
                 disabled={!canSubmit}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-amber-400 px-6 py-3 text-base font-semibold text-black shadow-lg shadow-fuchsia-600/30 transition hover:scale-[1.01] hover:shadow-fuchsia-400/40 disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isLoading ? "生成中…" : "生成 Banksy 风格图片"}
+                {isLoading ? "Generating..." : "Generate Banksy-style image"}
               </button>
             </form>
           </section>
@@ -134,10 +133,10 @@ export default function Home() {
           <section className="flex flex-col gap-4">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20 backdrop-blur">
               <div className="flex items-center justify-between text-sm text-slate-300">
-                <span className="font-medium text-white">生成结果</span>
+                <span className="font-medium text-white">Output</span>
                 {isLoading && (
                   <span className="animate-pulse text-xs text-fuchsia-100">
-                    正在请求 OpenAI…
+                    Generating with OpenAI...
                   </span>
                 )}
               </div>
@@ -146,23 +145,23 @@ export default function Home() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={imageSrc}
-                    alt="生成结果"
+                    alt="Banksy style output"
                     className="h-full w-full object-cover"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-sm text-slate-400">
-                    生成的图片会显示在这里
+                    Your generated image will appear here.
                   </div>
                 )}
               </div>
             </div>
 
             <div className="rounded-xl border border-white/10 bg-black/40 px-5 py-4 text-sm text-slate-300">
-              <p className="font-medium text-white">使用说明</p>
+              <p className="font-medium text-white">How it works</p>
               <ul className="mt-2 space-y-1 text-slate-300/90">
-                <li>· 后端会在请求中自动加入固定参考图片，无需用户上传。</li>
-                <li>· 可以多次尝试不同描述，找到喜欢的构图与元素。</li>
-                <li>· 若频繁失败，请检查环境变量中的参考图和 API Key。</li>
+                <li>Uses OpenAI gpt-image-1 with a fixed reference image for consistent Banksy texture.</li>
+                <li>Everything runs in a single Next.js app; the Docker image serves both API and static assets.</li>
+                <li>Add your OPENAI_API_KEY at deploy time to enable generation (not included in this deployment).</li>
               </ul>
             </div>
           </section>
