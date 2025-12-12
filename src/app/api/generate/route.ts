@@ -26,9 +26,11 @@ export async function POST(req: Request) {
       : `${baseUrl}/${rawReference.replace(/^public\\/?/, "")}`
     : null;
 
+  const stylePrefix =
+    "Stencil street-art style, spray paint texture, gritty urban wall.";
   const promptWithStyle = referenceUrl
-    ? `Banksy style. Use this reference image for inspiration: ${referenceUrl}. ${prompt}`
-    : `Banksy style. ${prompt}`;
+    ? `${stylePrefix} Use this reference image for inspiration: ${referenceUrl}. ${prompt}`
+    : `${stylePrefix} ${prompt}`;
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
