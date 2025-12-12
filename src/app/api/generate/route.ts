@@ -14,21 +14,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const rawReference =
-    process.env.REFERENCE_IMAGE_URL || process.env.REFERENCE_IMAGE_PATH;
-
-  // Build a public URL for the reference image (if provided) and inject only in the backend prompt.
-  const host = req.headers.get("host") || "localhost";
-  const baseUrl = `https://${host}`;
-  const referenceUrl = rawReference
-    ? rawReference.startsWith("http")
-      ? rawReference
-      : `${baseUrl}/${rawReference.replace(/^public\\/?/, "")}`
-    : null;
-
-  const promptWithStyle = referenceUrl
-    ? `Imitate the style and mood of this reference image: ${referenceUrl}. Follow this description to generate the image: ${prompt}`
-    : `Follow this description to generate the image: ${prompt}`;
+  const promptWithStyle = `Follow this description to generate the image: ${prompt}`;
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
