@@ -161,7 +161,7 @@ export default function Home() {
               <ul className="mt-2 space-y-1 text-slate-300/90">
                 <li>Uses OpenAI gpt-image-1 with a fixed reference image for consistent Banksy texture.</li>
                 <li>Everything runs in a single Next.js app; the Docker image serves both API and static assets.</li>
-                <li>Add your OPENAI_API_KEY at deploy time to enable generation (not included in this deployment).</li>
+                <li>Reads the injected AI_BUILDER_TOKEN to call the AI Builders API (no separate OpenAI key needed).</li>
               </ul>
             </div>
           </section>
