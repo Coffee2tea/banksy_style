@@ -14,7 +14,22 @@ export async function POST(req: Request) {
     );
   }
 
-  const promptWithStyle = `Follow this description to generate the image: ${prompt}`;
+  const rawReference =
+    process.env.REFERENCE_IMAGE_URL || process.env.REFERENCE_IMAGE_PATH;
+
+  let referenceUrl: string | null = null;
+  if (rawReference) {
+    if (rawReference.startsWith("http")) {
+      referenceUrl = rawReference;
+    } else {
+      const host = req.headers.get("host") || "localhost";
+      referenceUrl = `https://${host}/${rawReference.replace(/^public\\/?/, "")}`;
+    }
+  }
+
+  const promptWithStyle = referenceUrl
+    ? `Image: ${referenceUrl}\nDescription: Generate a new image with the same visual style, but showing: ${prompt}`
+    : `Description: ${prompt}`;
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
