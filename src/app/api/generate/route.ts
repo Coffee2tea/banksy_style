@@ -63,19 +63,16 @@ export async function POST(req: Request) {
     );
   }
 
-  const apiKey = process.env.AI_BUILDER_TOKEN;
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { message: "AI_BUILDER_TOKEN is missing." },
+      { message: "OPENAI_API_KEY is missing." },
       { status: 500 },
     );
   }
 
   try {
-    const openai = new OpenAI({
-      apiKey,
-      baseURL: "https://space.ai-builders.com/backend/v1",
-    });
+    const openai = new OpenAI({ apiKey });
 
     const result = await openai.images.generate({
       model: "gpt-image-1",
