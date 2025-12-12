@@ -111,7 +111,7 @@ export default function Home() {
 
               <div className="flex items-center justify-between text-sm text-slate-300">
                 <span>
-                  The API uses your prompt with a Banksy-style bias; if a reference image URL/path is provided, it is included in the prompt as guidance.
+                  Your prompt is sent with a Banksy-style bias; the backend secretly appends a reference image URL so the model sees it (not shown in the UI).
                 </span>
                 {message && (
                   <span className="rounded-full border border-amber-300/30 bg-amber-500/10 px-3 py-1 text-amber-100">

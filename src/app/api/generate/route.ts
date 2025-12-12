@@ -14,10 +14,20 @@ export async function POST(req: Request) {
     );
   }
 
-  const referenceUrl =
+  const rawReference =
     process.env.REFERENCE_IMAGE_URL || process.env.REFERENCE_IMAGE_PATH;
+
+  // Build a public URL for the reference image (if provided) and inject only in the backend prompt.
+  const host = req.headers.get("host") || "localhost";
+  const baseUrl = `https://${host}`;
+  const referenceUrl = rawReference
+    ? rawReference.startsWith("http")
+      ? rawReference
+      : `${baseUrl}/${rawReference.replace(/^public\\/?/, "")}`
+    : null;
+
   const promptWithStyle = referenceUrl
-    ? `Banksy style. Use this reference image for inspiration if possible: ${referenceUrl}. ${prompt}`
+    ? `Banksy style. Use this reference image for inspiration: ${referenceUrl}. ${prompt}`
     : `Banksy style. ${prompt}`;
 
   const apiKey = process.env.OPENAI_API_KEY;
