@@ -14,19 +14,6 @@ export async function POST(req: Request) {
     );
   }
 
-  const rawReference =
-    process.env.REFERENCE_IMAGE_URL || process.env.REFERENCE_IMAGE_PATH;
-
-  let referenceUrl: string | null = null;
-  if (rawReference) {
-    if (rawReference.startsWith("http")) {
-      referenceUrl = rawReference;
-    } else {
-      const host = req.headers.get("host") || "localhost";
-      referenceUrl = `https://${host}/${rawReference.replace(/^public\\/?/, "")}`;
-    }
-  }
-
   const styleDescriptor = `Style guide (JSON):
 {
   "style_name": "High-Contrast Stencil Street Mural",
@@ -96,9 +83,7 @@ export async function POST(req: Request) {
   }
 }`;
 
-  const promptWithStyle = referenceUrl
-    ? `${styleDescriptor}\nImage: ${referenceUrl}\nDescription: Generate a new image with the same visual style, but showing: ${prompt}`
-    : `${styleDescriptor}\nDescription: Generate a new image with the same visual style, but showing: ${prompt}`;
+  const promptWithStyle = `${styleDescriptor}\nDescription: Generate a new image with the same visual style, but showing: ${prompt}`;
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {

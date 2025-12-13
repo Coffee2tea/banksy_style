@@ -111,7 +111,7 @@ export default function Home() {
 
               <div className="flex items-center justify-between text-sm text-slate-300">
                 <span>
-                  The backend adds a fixed stencil mural style guide (JSON) and, if configured, a reference image URL; your prompt is appended after that.
+                  The backend adds a fixed stencil mural style guide (JSON); your prompt is appended after that.
                 </span>
                 {message && (
                   <span className="rounded-full border border-amber-300/30 bg-amber-500/10 px-3 py-1 text-amber-100">
@@ -159,7 +159,7 @@ export default function Home() {
             <div className="rounded-xl border border-white/10 bg-black/40 px-5 py-4 text-sm text-slate-300">
               <p className="font-medium text-white">How it works</p>
               <ul className="mt-2 space-y-1 text-slate-300/90">
-                <li>Uses OpenAI gpt-image-1 with a fixed stencil mural style guide; if a reference is set, the backend includes its URL in the prompt as guidance.</li>
+                <li>Uses OpenAI gpt-image-1 with a fixed stencil mural style guide to steer the look.</li>
                 <li>Everything runs in a single Next.js app; the Docker image serves both API and static assets.</li>
                 <li>Requires an `OPENAI_API_KEY` at deploy time to call the OpenAI image endpoint.</li>
               </ul>
